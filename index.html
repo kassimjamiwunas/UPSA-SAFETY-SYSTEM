@@ -274,7 +274,7 @@
     const username = document.getElementById("loginUsername").value;
     const password = document.getElementById("loginPassword").value;
 
-    fetch("http://localhost:5000/login", {
+    fetch("https://upsa-safety-system.onrender.com/login", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({ username, password })
@@ -321,7 +321,7 @@
       password: password
     };
 
-    fetch("http://localhost:5000/signup", {
+    fetch("hhttps://upsa-safety-system.onrender.com/signup", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify(payload)
