@@ -402,7 +402,7 @@
   // 3. API FETCH FUNCTIONS
   // ==========================================
   function loadData() {
-    fetch("http://localhost:5000/reports", {
+    fetch("https://upsa-safety-system.onrender.com/reports", {
       headers: { Authorization: token }
     })
     .then(res => res.json())
@@ -418,7 +418,7 @@
     });
 
     // Optional: Fetch server-side stats
-    fetch("http://localhost:5000/stats", {
+    fetch("hhttps://upsa-safety-system.onrender.com/stats", {
       headers: { Authorization: token }
     })
     .then(res => res.json())
@@ -519,7 +519,7 @@
   // 5. USER ACTIONS (Updates, Alerts, Downloads)
   // ==========================================
   function updateStatus(id, status) {
-    fetch(`http://localhost:5000/report/${id}`, {
+    fetch(`hhttps://upsa-safety-system.onrender.com/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -544,7 +544,7 @@
       return;
     }
 
-    fetch("http://localhost:5000/alerts", {
+    fetch("https://upsa-safety-system.onrender.com/alerts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
