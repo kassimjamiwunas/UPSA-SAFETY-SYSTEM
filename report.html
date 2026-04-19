@@ -308,7 +308,7 @@
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
     submitBtn.disabled = true;
 
-    fetch("http://localhost:5000/report", {
+    fetch("https://upsa-safety-system.onrender.com/report", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
