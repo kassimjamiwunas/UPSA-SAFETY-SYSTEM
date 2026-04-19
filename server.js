@@ -2,13 +2,21 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const db = require("./db"); // Notice we removed Twilio here!
+const db = require("./db"); 
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
+// 👇 THIS IS THE MISSING MAGIC CODE 👇
+const path = require('path');
+
+// This forces the server to look in the exact folder where the server.js file lives
+app.use(express.static(path.join(__dirname, 'public')));
+
+/* ================= TEST ENDPOINT ================= */
+// (Leave all your routes below this exactly the same!)
 /* ================= TEST ENDPOINT ================= */
 app.get("/test", (req, res) => {
   res.json({ message: "Server is working" });
@@ -184,5 +192,5 @@ app.get("/stats", (req, res) => {
 
 /* ================= START SERVER ================= */
 app.listen(5000, () => {
-  console.log("Server running on http://localhost:5000");
+  console.log("Server running on hhttps://upsa-safety-system.onrender.com");
 });
