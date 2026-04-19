@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPSA Safety (Policing) Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ===== CSS Variables & Reset ===== */
+    :root {
+      --primary-gold: #ffd700;
+      --primary-gold-hover: #ffc107;
+      --bg-gradient-1: #0f2027;
+      --bg-gradient-2: #203a43;
+      --bg-gradient-3: #2c5364;
+      --text-light: #ffffff;
+      --text-muted: #b0bec5;
+      --error-color: #ff4c4c;
+      --success-color: #00ffcc;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* ===== Body & Background ===== */
+    body {
+      background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
+      background-size: 200% 200%;
+      animation: gradientShift 10s ease infinite;
+      color: var(--text-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ===== Glassmorphism Container ===== */
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 40px 30px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    /* ===== Header & Logo ===== */
+    .logo {
+      width: 80px;
+      margin-bottom: 15px;
+      filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--primary-gold);
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: var(--text-light);
+    }
+
+    /* ===== Form Inputs ===== */
+    .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-size: 14px;
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    input::placeholder { color: var(--text-muted); }
+
+    input:focus, select:focus {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--primary-gold);
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    select option {
+      background-color: var(--bg-gradient-2);
+      color: var(--text-light);
+    }
+
+    /* ===== Buttons ===== */
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      background: var(--primary-gold);
+      color: #111;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+
+    button:hover {
+      background: var(--primary-gold-hover);
+      transform: translateY(-2px);
+    }
+
+    button:active { transform: translateY(0); }
+
+    /* ===== Links & Messages ===== */
+    .switch-link {
+      color: var(--text-muted);
+      cursor: pointer;
+      margin-top: 20px;
+      display: inline-block;
+      font-size: 13px;
+      transition: color 0.3s ease;
+    }
+
+    .switch-link:hover { color: var(--primary-gold); }
+
+    .switch-link span {
+      color: var(--primary-gold);
+      font-weight: 600;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      min-height: 20px;
+    }
+
+    .msg-success { color: var(--success-color); }
+    .msg-error { color: var(--error-color); }
+
+    /* ===== Animations ===== */
+    .hidden { display: none !important; }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 480px) {
+      .container { padding: 30px 20px; }
+      .brand-title { font-size: 18px; }
+      input, select, button { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  
+<div class="container">
+  <img src="UPSA logo 1.png" alt="UPSA logo" class="logo">
+  
+  <div class="brand-title">UPSA Safety System</div>
+
+  <form id="loginForm" class="fade-in">
+    <h2>Welcome Back</h2>
+    <div class="input-group">
+      <input id="loginUsername" type="text" placeholder="Username" required>
+    </div>
+    <div class="input-group">
+      <input id="loginPassword" type="password" placeholder="Password" required>
+    </div>
+    <button type="submit">Login</button>
+    <div class="switch-link" id="showSignup">Don't have an account? <span>Sign Up</span></div>
+  </form>
+
+  <form id="signupForm" class="hidden fade-in">
+    <h2>Create Account</h2>
+
+    <div class="input-group">
+      <input id="fullName" type="text" placeholder="Full Name" required>
+    </div>
+    <div class="input-group">
+      <input id="phone" type="tel" placeholder="Phone Number" required>
+    </div>
+    <div class="input-group">
+      <input id="email" type="email" placeholder="Email Address" required>
+    </div>
+    <div class="input-group">
+      <select id="role" required>
+        <option value="" disabled selected>Select Role</option>
+        <option value="student">Student</option>
+        <option value="security">Security Officer</option>
+        <option value="admin">Administrator</option>
+      </select>
+    </div>
+    <div class="input-group">
+      <input id="signupUsername" type="text" placeholder="Username" required>
+    </div>
+    <div class="input-group">
+      <input id="signupPassword" type="password" placeholder="Password" required>
+    </div>
+    <div class="input-group">
+      <input id="confirmPassword" type="password" placeholder="Confirm Password" required>
+    </div>
+
+    <button type="submit">Sign Up</button>
+    <div class="switch-link" id="showLogin">Already have an account? <span>Login</span></div>
+  </form>
+
+  <div class="message" id="message"></div>
+</div>
+
+<script>
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const message = document.getElementById("message");
+
+  const showSignup = document.getElementById("showSignup");
+  const showLogin = document.getElementById("showLogin");
+
+  // Helper to show messages
+  function showMessage(text, isError = false) {
+    message.textContent = text;
+    message.className = `message ${isError ? 'msg-error' : 'msg-success'}`;
+  }
+
+  // ===== Toggle Forms =====
+  showSignup.addEventListener("click", () => {
+    loginForm.classList.add("hidden");
+    signupForm.classList.remove("hidden");
+    message.textContent = ""; 
+  });
+
+  showLogin.addEventListener("click", () => {
+    signupForm.classList.add("hidden");
+    loginForm.classList.remove("hidden");
+    message.textContent = ""; 
+  });
+
+  // ===== Login Handler =====
+  loginForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    const username = document.getElementById("loginUsername").value;
+    const password = document.getElementById("loginPassword").value;
+
+    fetch("http://localhost:5000/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      // ✅ PROPERLY MERGED LOGIC:
+      if(data.token){
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user_id", data.user_id); // Saves the user ID safely
+        
+        showMessage("Authentication Successful! Redirecting...");
+        setTimeout(() => {
+          if(data.role === "admin") window.location.href = "admin.html";
+          else window.location.href = "report.html";
+        }, 1500);
+      } else {
+        showMessage(data.message || "Invalid credentials", true);
+      }
+    })
+    .catch(err => showMessage("Connection error. Is the server running?", true));
+  });
+
+  // ===== Signup Handler =====
+  signupForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    
+    const password = document.getElementById("signupPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+
+    // Password validation check
+    if(password !== confirmPassword) {
+      showMessage("Passwords do not match!", true);
+      return;
+    }
+
+    // Capture all fields for the backend
+    const payload = {
+      fullName: document.getElementById("fullName").value,
+      phone: document.getElementById("phone").value,
+      email: document.getElementById("email").value,
+      role: document.getElementById("role").value,
+      username: document.getElementById("signupUsername").value,
+      password: password
+    };
+
+    fetch("http://localhost:5000/signup", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if(data.success){
+        showMessage(data.message || "Account created successfully!");
+        setTimeout(() => {
+          signupForm.reset();
+          signupForm.classList.add("hidden");
+          loginForm.classList.remove("hidden");
+          message.textContent = "";
+        }, 1500);
+      } else {
+        showMessage(data.message || "Registration failed.", true);
+      }
+    })
+    .catch(err => showMessage("Connection error. Is the server running?", true));
+  });
+</script>
+
+</body>
+</html>
