@@ -16,8 +16,6 @@ const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* ================= TEST ENDPOINT ================= */
-// (Leave all your routes below this exactly the same!)
-/* ================= TEST ENDPOINT ================= */
 app.get("/test", (req, res) => {
   res.json({ message: "Server is working" });
 });
@@ -71,8 +69,14 @@ app.post("/report", (req, res) => {
   });
 });
 
-/* ================= GET REPORTS ================= */
+/* ================= GET REPORTS (SECURED FOR ADMINS) ================= */
 app.get("/reports", (req, res) => {
+  // 🚨 SECURITY CHECK: Ensure the user is an admin
+  const userRole = req.headers['x-user-role'];
+  if (userRole !== 'admin') {
+    return res.status(403).json({ message: "Access Denied: Admins Only" });
+  }
+
   const sql = "SELECT * FROM reports ORDER BY created_at DESC";
 
   db.query(sql, (err, result) => {
@@ -169,8 +173,14 @@ app.post("/alerts", (req, res) => {
   });
 });
 
-/* ================= STATISTICS ================= */
+/* ================= STATISTICS (SECURED FOR ADMINS) ================= */
 app.get("/stats", (req, res) => {
+  // 🚨 SECURITY CHECK: Ensure the user is an admin
+  const userRole = req.headers['x-user-role'];
+  if (userRole !== 'admin') {
+    return res.status(403).json({ message: "Access Denied: Admins Only" });
+  }
+
   const total = "SELECT COUNT(*) AS total FROM reports";
   const pending = "SELECT COUNT(*) AS pending FROM reports WHERE status='Pending'";
   const resolved = "SELECT COUNT(*) AS resolved FROM reports WHERE status='Resolved'";
@@ -191,6 +201,7 @@ app.get("/stats", (req, res) => {
 });
 
 /* ================= START SERVER ================= */
-app.listen(5000, () => {
-  console.log("Server running on hhttps://upsa-safety-system.onrender.com");
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`✅ Server is live on port ${PORT}`);
 });
