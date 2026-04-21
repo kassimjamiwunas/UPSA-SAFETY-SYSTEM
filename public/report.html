@@ -146,7 +146,7 @@
 
   <nav class="navbar">
     <div class="brand">
-      <img src="UPSA.webp" alt="UPSA Logo" onerror="this.src='https://via.placeholder.com/45x45.png?text=UPSA'">
+      <img src="UPSA.webp" alt="UPSA Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/45x45.png?text=UPSA'">
       <h2>Upsa Safety Portal</h2>
     </div>
     <button class="logout-btn" id="logoutBtn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
@@ -294,7 +294,6 @@
   document.getElementById("incidentForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    // FIXED: The payload is now safely inside the Javascript block and includes the user_id
     const payload = {
       report_type: document.getElementById("reportType").value,
       location: document.getElementById("location").value,
@@ -329,12 +328,12 @@
       }
     })
     .catch(err => {
+      console.error(err);
       submitBtn.innerHTML = originalBtnText;
       submitBtn.disabled = false;
       showToast("Connection error. Ensure server is running.", true);
     });
   });
-
 </script>
 
 </body>
