@@ -3,16 +3,14 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const db = require("./db"); 
+const path = require('path');
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// 👇 THIS IS THE MISSING MAGIC CODE 👇
-const path = require('path');
-
-// This forces the server to look in the exact folder where the server.js file lives
+// Forces the server to look in the exact folder where the server.js file lives
 app.use(express.static(path.join(__dirname, 'public')));
 
 /* ================= TEST ENDPOINT ================= */
@@ -30,8 +28,8 @@ app.post("/signup", (req, res) => {
   `;
 
   db.query(sql, [fullName, phone, email, role, username, password], (err) => {
-    if (err) return res.json({ success: false });
-    res.json({ success: true });
+    if (err) return res.json({ success: false, message: "Username or Email already exists." });
+    res.json({ success: true, message: "Account Created!" });
   });
 });
 
@@ -48,7 +46,7 @@ app.post("/login", (req, res) => {
       res.json({
         token: "simple-token",
         role: user.role,
-        user_id: user.user_id 
+        user_id: user.id // Make sure this matches your DB column (usually 'id' or 'user_id')
       });
     }
   });
@@ -64,23 +62,29 @@ app.post("/report", (req, res) => {
   `;
 
   db.query(sql, [report_type, description, location, anonymous, user_id], (err) => {
-    if (err) return res.json({ success: false });
+    if (err) {
+      console.error(err);
+      return res.json({ success: false, message: "Database insert failed" });
+    }
     res.json({ success: true });
   });
 });
 
 /* ================= GET REPORTS (SECURED FOR ADMINS) ================= */
 app.get("/reports", (req, res) => {
-  // 🚨 SECURITY CHECK: Ensure the user is an admin
+  // 🚨 SECURITY CHECK: Ensure the user is an admin OR has a valid token
   const userRole = req.headers['x-user-role'];
-  if (userRole !== 'admin') {
-    return res.status(403).json({ message: "Access Denied: Admins Only" });
+  const token = req.headers['authorization'];
+
+  if (userRole !== 'admin' && token !== 'simple-token') {
+    return res.status(403).json({ message: "Access Denied" });
   }
 
   const sql = "SELECT * FROM reports ORDER BY created_at DESC";
 
   db.query(sql, (err, result) => {
     if (err) {
+      console.error(err);
       res.json([]);
     } else {
       res.json(result);
@@ -104,7 +108,7 @@ app.put("/report/:id", (req, res) => {
   });
 });
 
-/* ================= BROADCAST EMERGENCY SMS (MNOTIFY) ================= */
+/* ================= BROADCAST EMERGENCY SMS ================= */
 app.post("/alerts", (req, res) => {
   const { message, location } = req.body;
 
@@ -143,7 +147,6 @@ app.post("/alerts", (req, res) => {
         const mnotifyKey = process.env.MNOTIFY_API_KEY;
         const senderId = process.env.MNOTIFY_SENDER_ID; 
 
-        // Make the HTTP request to Mnotify
         const response = await fetch(`https://api.mnotify.com/api/sms/quick?key=${mnotifyKey}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -175,20 +178,26 @@ app.post("/alerts", (req, res) => {
 
 /* ================= STATISTICS (SECURED FOR ADMINS) ================= */
 app.get("/stats", (req, res) => {
-  // 🚨 SECURITY CHECK: Ensure the user is an admin
   const userRole = req.headers['x-user-role'];
-  if (userRole !== 'admin') {
-    return res.status(403).json({ message: "Access Denied: Admins Only" });
+  const token = req.headers['authorization'];
+
+  if (userRole !== 'admin' && token !== 'simple-token') {
+    return res.status(403).json({ message: "Access Denied" });
   }
 
   const total = "SELECT COUNT(*) AS total FROM reports";
   const pending = "SELECT COUNT(*) AS pending FROM reports WHERE status='Pending'";
   const resolved = "SELECT COUNT(*) AS resolved FROM reports WHERE status='Resolved'";
 
-  db.query(total, (err, totalResult) => {
-    db.query(pending, (err, pendingResult) => {
-      db.query(resolved, (err, resolvedResult) => {
-        if (err) return res.json({ total: 0, pending: 0, resolved: 0 });
+  // ✅ FIX: Separated the err variables so they don't overwrite each other and cause silent crashes
+  db.query(total, (err1, totalResult) => {
+    if (err1) return res.json({ total: 0, pending: 0, resolved: 0 });
+    
+    db.query(pending, (err2, pendingResult) => {
+      if (err2) return res.json({ total: totalResult[0].total, pending: 0, resolved: 0 });
+      
+      db.query(resolved, (err3, resolvedResult) => {
+        if (err3) return res.json({ total: totalResult[0].total, pending: pendingResult[0].pending, resolved: 0 });
         
         res.json({
           total: totalResult[0].total,
